@@ -6,8 +6,8 @@
 	"scripts": {
 		"clean": "shx rm -rf dist",
 		"build": "tsgo -p tsconfig.build.json",
-		"start": "node --env-file-if-exists=../../.env --import tsx/esm src/server.ts",
-		"dev": "node --env-file-if-exists=../../.env --import tsx/esm --watch src/server.ts",
+		"start": "node ../../scripts/run-web-app.mjs",
+		"dev": "node ../../scripts/run-web-app.mjs --watch",
 		"test": "vitest --run",
 		"typecheck": "tsgo --noEmit -p tsconfig.build.json"
 	},

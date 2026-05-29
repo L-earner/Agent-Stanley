@@ -386,12 +386,39 @@
       gap: 8px;
       color: var(--muted);
       font-size: 13px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 12px;
     }
 
     .tool-row {
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .tool-row.done {
+      color: var(--green);
+    }
+
+    .checkmark {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: #e6f4ea;
+      color: var(--green);
+      display: inline-grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .working-note {
+      padding-top: 8px;
+      border-top: 1px solid #eee9df;
+      color: var(--muted);
     }
 
     .spinner {
@@ -708,7 +735,10 @@
 
       const activity = document.createElement("div");
       activity.className = "activity";
-      activity.innerHTML = `<div class="tool-row"><span class="spinner"></span><span>Starting research</span></div>`;
+      activity.innerHTML = `
+        <div class="tool-log"></div>
+        <div class="tool-row working-note"><span class="spinner"></span><span>Starting research...</span></div>
+      `;
       turn.appendChild(activity);
 
       startStream(query, turn, activity);
@@ -797,9 +827,32 @@
 
     function updateActivity(activity, toolName, running) {
       const label = TOOL_LABELS[toolName] || String(toolName ?? "").replace(/_/g, " ");
-      activity.innerHTML = running
-        ? `<div class="tool-row"><span class="spinner"></span><span>${escHtml(label)}</span></div>`
-        : `<div class="tool-row"><span>Done:</span><span>${escHtml(label)}</span></div>`;
+      const log = activity.querySelector(".tool-log");
+      const workingNote = activity.querySelector(".working-note");
+      const id = `step-${safeId(toolName)}`;
+
+      if (running) {
+        if (!log.querySelector(`[data-step-id="${id}"]`)) {
+          const row = document.createElement("div");
+          row.className = "tool-row";
+          row.dataset.stepId = id;
+          row.innerHTML = `<span class="spinner"></span><span>${escHtml(label)}</span>`;
+          log.appendChild(row);
+        }
+        workingNote.innerHTML = `<span class="spinner"></span><span>Still working. Waiting for the next source or answer...</span>`;
+        return;
+      }
+
+      const row = log.querySelector(`[data-step-id="${id}"]`);
+      if (row) {
+        row.className = "tool-row done";
+        row.innerHTML = `<span class="checkmark">✓</span><span>${escHtml(label)} complete</span>`;
+      }
+      workingNote.innerHTML = `<span class="spinner"></span><span>Still working. Synthesizing the next step...</span>`;
+    }
+
+    function safeId(value) {
+      return String(value ?? "").replace(/[^a-zA-Z0-9_-]/g, "-");
     }
 
     function renderFinalAnswer(turn, answer) {
