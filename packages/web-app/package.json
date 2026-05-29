@@ -6,8 +6,8 @@
 	"scripts": {
 		"clean": "shx rm -rf dist",
 		"build": "tsgo -p tsconfig.build.json",
-		"start": "node --import tsx/esm src/server.ts",
-		"dev": "node --import tsx/esm --watch src/server.ts",
+		"start": "node --env-file-if-exists=../../.env --import tsx/esm src/server.ts",
+		"dev": "node --env-file-if-exists=../../.env --import tsx/esm --watch src/server.ts",
 		"test": "vitest --run",
 		"typecheck": "tsgo --noEmit -p tsconfig.build.json"
 	},
