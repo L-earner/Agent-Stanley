@@ -6,40 +6,47 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A **financial research analyst engine** (`agent-stanley`) built on the Pi coding-agent runtime (Earendil Works). It answers questions about public companies using SEC filings (10-K, 10-Q), XBRL facts, and earnings call transcripts. All 13 planned phases are implemented and passing tests (85/85 research-agent, 6/6 web-app, 5/5 evals).
 
+The project ships in two forms:
+- **Global CLI binary** (`agent-stanley` on npm) — esbuild-bundled from `packages/web-app/src/cli.ts` into `dist/agent-stanley.js`
+- **Publishable npm packages** — `@earendil-works/pi-research-db`, `@earendil-works/pi-sec-ingestion`, `@earendil-works/pi-transcript-ingestion`, `@earendil-works/pi-research-agent`
+
 Reference docs live under `docs/finance-agent/`: `ARCHITECTURE.md`, `HANDOFF.md`, `TODO.md`, ADRs.
 
 ## Environment
 
-Node.js 22. Monorepo requires `>=22.19.0`. npm workspaces. Linter: biome (tabs, indent 3, line 120). Test runner: vitest.
+Node.js `>=22.19.0`. npm workspaces monorepo. Build tool: `tsgo` (`@typescript/native-preview`). Linter: biome (tabs, indent 3, line 120). Test runner: vitest.
 
 ## Commands (run from repo root)
 
 ```bash
-# Build — tui → ai → agent → coding-agent → finance packages → research-tui
-npm run build
-
-# If ai package scripts fail, build ai manually first:
-cd packages/ai && npx tsx scripts/generate-models.ts && npx tsx scripts/generate-image-models.ts && npx tsgo -p tsconfig.build.json
-
-# Lint + typecheck
+# After ANY code change — lint + typecheck (full output, no tail). Fix all errors before continuing.
 npm run check
 
-# Test all workspaces
-npm test
+# Run all tests without API keys (use this, not npm test)
+./test.sh
 
-# Test a single package
-cd packages/research-agent && npx vitest --run
-cd packages/research-db && npx vitest --run
-cd packages/sec-ingestion && npx vitest --run
-cd packages/web-app && npx vitest --run
+# Run a single package's tests
+cd packages/research-agent && node ../../node_modules/vitest/dist/cli.js --run
+cd packages/research-db && node ../../node_modules/vitest/dist/cli.js --run
+cd packages/sec-ingestion && node ../../node_modules/vitest/dist/cli.js --run
+cd packages/web-app && node ../../node_modules/vitest/dist/cli.js --run
 
 # Run a single test file
-cd packages/research-agent && npx vitest --run test/runtime.test.ts
+cd packages/research-agent && node ../../node_modules/vitest/dist/cli.js --run test/runtime.test.ts
 
 # Offline evals (fixture-backed, no LLM calls)
 cd packages/research-agent && npm run eval
 
-# Run the web server (dev — hot reload)
+# Build all workspace packages (tui → ai → agent → coding-agent → finance packages → research-tui)
+npm run build
+
+# If the ai package model-generation scripts fail, build ai manually first:
+cd packages/ai && npx tsx scripts/generate-models.ts && npx tsx scripts/generate-image-models.ts && npx tsgo -p tsconfig.build.json
+
+# Build the npm-publishable CLI bundle (esbuild → dist/agent-stanley.js)
+npm run build:npm
+
+# Run the web server (dev — hot reload via --watch)
 npm run dev
 # Production
 npm start
@@ -47,6 +54,8 @@ npm start
 # Run the terminal UI
 npm run tui
 ```
+
+Do not run `npm run build` or `npm test` unless the user explicitly requests it. `./test.sh` is the correct test command — it unsets all provider API keys and moves auth.json aside to prevent accidental live calls.
 
 ## Package Structure
 
@@ -87,6 +96,7 @@ packages/
       vectorSearch.ts                  ← cosine similarity, EmbeddingProvider interface
       hybridSearch.ts                  ← Reciprocal Rank Fusion (RRF, k=60) + pluggable rerank
   web-app/src/
+    cli.ts                             ← npm package entry point (agent-stanley binary)
     server.ts                          ← Node HTTP server, /api/research/chat SSE endpoint
     sseSerializer.ts                   ← ResearchAgentEvent → SSE frame
     toolDeps.ts                        ← in-memory repo + provider wiring for all finance tools
@@ -97,12 +107,13 @@ packages/
     research-tui.ts                    ← TUI orchestrator: input, streaming loop, turn management
     tool-deps.ts                       ← same wiring as web-app/toolDeps.ts
     theme.ts                           ← ANSI color helpers + MarkdownTheme
-    components/
-      user-message.ts                  ← renders user prompt line
-      tool-call.ts                     ← single tool row with spinner → ✓/✗
-      streaming-text.ts                ← accumulates text_delta into Markdown
-      analyst-answer.ts                ← final AnalystAnswer: key points, tables, caveats, sources
-      footer.ts                        ← divider + status + keybinding hints
+    components/                        ← user-message, tool-call, streaming-text, analyst-answer, footer
+scripts/
+  build-npm-package.mjs               ← esbuild bundle: web-app/src/cli.ts → dist/agent-stanley.js
+  publish.mjs                         ← publishes @earendil-works/pi-{ai,agent-core,tui,coding-agent}
+  release.mjs                         ← full release flow: bump → changelogs → check → commit → tag → push
+  sync-versions.js                    ← syncs inter-package dep versions after version bumps
+  run-web-app.mjs                     ← dev/prod runner (loads .env, passes --watch for dev)
 ```
 
 ## Architecture
@@ -126,6 +137,11 @@ User query
 
 ## Key Rules
 
+### TypeScript
+- Use only **erasable TypeScript syntax**: no `enum`, `namespace`/`module`, parameter properties, `import =`, `export =`. Node runs `.ts` files directly in strip-only mode; these constructs require JS emit.
+- No inline/dynamic imports (`await import()`, `import("pkg").Type`). Top-level imports only.
+- Never modify `packages/ai/src/models.generated.ts` directly. Update `packages/ai/scripts/generate-models.ts` and regenerate.
+
 ### Pi SDK isolation
 - `PiResearchAgentRuntime.ts` is the **only** file that imports `@earendil-works/pi-coding-agent`. All other code depends on `ResearchAgentRuntime` (interface) or Pi-independent core functions.
 - Always set `noTools: "builtin"` — disables bash, edit, write, grep in the product runtime.
@@ -148,7 +164,7 @@ export function createResolveCompanyTool(deps) { return defineTool({ ..., execut
 ### Testing
 - All tests use fixtures/mocks. Never make real HTTP calls to SEC EDGAR or API Ninjas in tests.
 - Inject `fetch` into clients so tests can substitute a stub without patching globals.
-- The Pi source repo has 3 pre-existing failing tests in `pi-ai` / `pi-coding-agent` (require Node 22 for direct `.ts` execution). Not caused by this project.
+- `packages/ai` and `packages/coding-agent` have 3 pre-existing failing tests in the Pi source that require Node 22 to run `.ts` files directly. Not caused by finance-agent code.
 
 ### Guardrails
 - Personalized buy/sell/hold advice must be refused — `financialAdviceGuard` has 13 regex patterns.
@@ -157,10 +173,38 @@ export function createResolveCompanyTool(deps) { return defineTool({ ..., execut
 - All three run via `runVerification()` inside `buildAnalystAnswer()` before the `final` event is emitted.
 
 ### Transcript licensing
-- `TranscriptProvider` interface only. `NinjasTranscriptProvider` is implemented but requires `API_NINJAS_KEY`. Do not add paid providers without documenting license terms, storage rights, and attribution in an ADR under `docs/finance-agent/adr/`.
+- `TranscriptProvider` interface only. Do not add paid providers without documenting license terms, storage rights, and attribution in an ADR under `docs/finance-agent/adr/`.
 
-### Pre-existing failures
-- `packages/ai` and `packages/coding-agent` have 3 failing tests in the upstream Pi source that require Node.js 22 for direct `.ts` execution. These are not caused by finance-agent work.
+## NPM Package Publishing
+
+### Two separate publish flows
+
+**1. `agent-stanley` CLI (root package, `version: 0.0.x`)**
+- Bundled via esbuild: `npm run build:npm` → `dist/agent-stanley.js` (single file, `#!/usr/bin/env node`)
+- `prepack` runs `build:npm` automatically before `npm publish`
+- External deps listed in `build-npm-package.mjs` are kept unbundled (declared as `dependencies` in root `package.json`)
+- Published as `agent-stanley` on npm; users install globally with `npm install -g agent-stanley`
+
+**2. `@earendil-works/pi-*` packages (lockstep versioned, `version: 0.1.x`)**
+- Finance packages: `pi-research-db`, `pi-sec-ingestion`, `pi-transcript-ingestion`, `pi-research-agent`
+- Pi core packages: `pi-ai`, `pi-agent-core`, `pi-tui`, `pi-coding-agent` (at `0.77.x`, managed by `scripts/publish.mjs`)
+- All finance packages must stay at the same version (`scripts/sync-versions.js` enforces this)
+
+### Release flow for `@earendil-works/pi-*`
+```bash
+node scripts/release.mjs patch    # fixes + additions
+node scripts/release.mjs minor    # breaking changes
+node scripts/release.mjs 0.2.0    # explicit version (must be > current)
+```
+This bumps all packages, updates `## [Unreleased]` → `## [version] - date` in each `CHANGELOG.md`, regenerates ai models + coding-agent shrinkwrap, runs `npm run check`, commits `Release vX.Y.Z`, tags it, adds fresh `## [Unreleased]` sections, and pushes. CI then publishes to npm via OIDC (no local `npm publish` needed).
+
+### Dependency management
+- Install: `npm install --ignore-scripts`
+- A pre-commit hook blocks lockfile commits. Set `PI_ALLOW_LOCKFILE_CHANGE=1` if a lockfile change is intentional.
+- After version bumps, run `node scripts/sync-versions.js` to keep inter-package dep versions in sync, then `npm install --package-lock-only --ignore-scripts`.
+
+### Changelog format
+Each package has `packages/*/CHANGELOG.md`. New entries go under `## [Unreleased]` with subsections `### Breaking Changes`, `### Added`, `### Changed`, `### Fixed`, `### Removed`. Released version sections are immutable.
 
 ## Environment Variables
 
@@ -168,7 +212,7 @@ export function createResolveCompanyTool(deps) { return defineTool({ ..., execut
 SEC_USER_AGENT="AppName contact@example.com"   # required for EDGAR filing downloads; fail fast if absent
 API_NINJAS_KEY="..."                           # required for Ninjas SEC client and transcript provider
 OPENAI_API_KEY="..."                           # or any Pi-supported provider credential
-PI_RESEARCH_MODEL="openai/gpt-5.4"             # optional; provider/model-id format
+PI_RESEARCH_MODEL="openai/gpt-4o"             # optional; provider/model-id format
 TRANSCRIPT_PROVIDER="fixture"                  # default for dev/test
 DATABASE_URL="postgres://..."                  # future production target (SQLite + Drizzle selected in ADR 0002)
 ```

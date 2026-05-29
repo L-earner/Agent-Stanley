@@ -1,13 +1,23 @@
 {
 	"name": "agent-stanley",
-	"private": true,
 	"type": "module",
+	"bin": {
+		"agent-stanley": "./dist/agent-stanley.js"
+	},
+	"files": [
+		"dist",
+		"public",
+		".env.example",
+		"README.md",
+		"LICENSE"
+	],
 	"workspaces": [
 		"packages/*"
 	],
 	"scripts": {
 		"clean": "npm run clean --workspaces --if-present",
 		"build": "npm run build -w @earendil-works/pi-tui && npm run build -w @earendil-works/pi-ai && npm run build -w @earendil-works/pi-agent-core && npm run build -w @earendil-works/pi-coding-agent && npm run build -w @earendil-works/pi-research-db && npm run build -w @earendil-works/pi-sec-ingestion && npm run build -w @earendil-works/pi-transcript-ingestion && npm run build -w @earendil-works/pi-research-agent && npm run build -w @earendil-works/pi-web-app && npm run build -w @earendil-works/pi-research-tui",
+		"build:npm": "node scripts/build-npm-package.mjs",
 		"check": "biome check --write --error-on-warnings . && npm run typecheck",
 		"typecheck": "npm run typecheck --workspaces --if-present",
 		"test": "npm run test --workspaces --if-present",
@@ -15,6 +25,7 @@
 		"start": "npm run start --workspace @earendil-works/pi-web-app",
 		"tui": "npm run start --workspace @earendil-works/pi-research-tui",
 		"check:browser-smoke": "node scripts/check-browser-smoke.mjs",
+		"prepack": "npm run build:npm",
 		"prepare": "husky"
 	},
 	"devDependencies": {
@@ -25,6 +36,17 @@
 		"shx": "0.4.0",
 		"tsx": "4.22.1",
 		"typescript": "5.9.3"
+	},
+	"dependencies": {
+		"cross-spawn": "7.0.6",
+		"hosted-git-info": "9.0.3",
+		"jiti": "2.7.0",
+		"proper-lockfile": "4.1.2",
+		"undici": "8.3.0",
+		"yaml": "2.9.0"
+	},
+	"optionalDependencies": {
+		"@silvia-odwyer/photon-node": "0.3.4"
 	},
 	"engines": {
 		"node": ">=22.19.0"

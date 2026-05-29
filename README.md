@@ -44,6 +44,24 @@ All numeric values come from XBRL facts — never from model memory. Every claim
 npm install --ignore-scripts
 ```
 
+## Global CLI
+
+After publishing to npm, install and run the web server with:
+
+```bash
+npm install -g agent-stanley
+agent-stanley
+```
+
+Configure keys through environment variables before launch:
+
+```bash
+export API_NINJAS_KEY="..."
+export SEC_USER_AGENT="AgentStanley contact@example.com"
+export OPENAI_API_KEY="..."
+agent-stanley
+```
+
 ## Run
 
 ```bash

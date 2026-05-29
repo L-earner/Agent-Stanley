@@ -15,7 +15,7 @@ if (existsSync(envFile)) {
 }
 args.push("--import", "tsx/esm");
 if (watch) args.push("--watch");
-args.push("src/server.ts");
+args.push("src/cli.ts");
 
 const child = spawn(process.execPath, args, {
 	stdio: "inherit",
