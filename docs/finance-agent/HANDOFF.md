@@ -105,7 +105,7 @@ All planned checklist items in `STATUS.md` are complete. The next useful work is
 
 ## How to run checks
 
-Run commands from `pi/` unless noted.
+Run commands from the repo root.
 
 ```bash
 npm install
