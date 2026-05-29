@@ -53,14 +53,21 @@ npm install -g agent-stanley
 agent-stanley
 ```
 
-Configure keys through environment variables before launch:
+Create `~/.agent-stanley` with your keys (loaded automatically on startup):
+
+```
+API_NINJAS_KEY=...
+SEC_USER_AGENT=AgentStanley contact@example.com
+OPENAI_API_KEY=...
+```
+
+Then just run:
 
 ```bash
-export API_NINJAS_KEY="..."
-export SEC_USER_AGENT="AgentStanley contact@example.com"
-export OPENAI_API_KEY="..."
 agent-stanley
 ```
+
+A `.env` file in the current working directory is also loaded and takes precedence over `~/.agent-stanley`.
 
 ## Run
 

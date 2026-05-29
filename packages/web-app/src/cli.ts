@@ -1,4 +1,13 @@
+import { existsSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { createResearchServer } from "./server.ts";
+
+const homeEnv = join(homedir(), ".agent-stanley");
+if (existsSync(homeEnv)) process.loadEnvFile(homeEnv);
+
+const cwdEnv = join(process.cwd(), ".env");
+if (existsSync(cwdEnv)) process.loadEnvFile(cwdEnv);
 
 const port = parseInt(process.env.PORT ?? "3000", 10);
 const server = createResearchServer({ port });
