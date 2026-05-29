@@ -2,7 +2,7 @@
 	"name": "agent-stanley",
 	"type": "module",
 	"bin": {
-		"agent-stanley": "./dist/agent-stanley.js"
+		"agent-stanley": "dist/agent-stanley.js"
 	},
 	"files": [
 		"dist",
