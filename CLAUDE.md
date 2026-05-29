@@ -10,7 +10,9 @@ The project ships in two forms:
 - **Global CLI binary** (`agent-stanley` on npm) — esbuild-bundled from `packages/web-app/src/cli.ts` into `dist/agent-stanley.js`
 - **Publishable npm packages** — `@earendil-works/pi-research-db`, `@earendil-works/pi-sec-ingestion`, `@earendil-works/pi-transcript-ingestion`, `@earendil-works/pi-research-agent`
 
-Reference docs live under `docs/finance-agent/`: `ARCHITECTURE.md`, `HANDOFF.md`, `TODO.md`, ADRs.
+Reference docs live under `docs/finance-agent/`: `ARCHITECTURE.md`, `HANDOFF.md`, `TODO.md`, and ADRs (5 decisions in `adr/`: agent-runtime-choice, database-choice, caching-and-refresh-strategy, transcript-licensing, pi-agent-core-migration).
+
+Additional development rules are in `AGENTS.md` at the repo root.
 
 ## Environment
 
@@ -55,7 +57,9 @@ npm start
 npm run tui
 ```
 
-Do not run `npm run build` or `npm test` unless the user explicitly requests it. `./test.sh` is the correct test command — it unsets all provider API keys and moves auth.json aside to prevent accidental live calls.
+Do not run `npm run build` or `npm test` unless the user explicitly requests it. `./test.sh` is the correct test command — it unsets all provider API keys and moves auth.json aside to prevent accidental live calls. The full vitest suite includes e2e tests that activate when endpoint/auth env vars are present; `./test.sh` prevents this.
+
+For ad-hoc scripts, write them to `/tmp`, run, edit if needed, then remove. Don't embed multi-line scripts in bash commands.
 
 ## Package Structure
 
@@ -67,7 +71,10 @@ packages/
       PiResearchAgentRuntime.ts        ← ONLY file that imports @earendil-works/pi-coding-agent
       PiCoreResearchAgentRuntime.ts    ← direct pi-agent-core adapter (migration path, not prod default)
     prompts/financeSystemPrompt.ts
-    tools/                             ← one file per tool; core logic separate from Pi defineTool wrapper
+    tools/
+      toolDeps.ts                      ← FinanceToolDeps type (DI contract injected into every tool)
+      index.ts                         ← buildFinanceTools()
+      resolveCompanyTool.ts            ← and one file per tool (core logic + Pi wrapper separately)
     types/                             ← AnalystAnswer, Evidence
     verification/                      ← citationVerifier, financialAdviceGuard, unsupportedClaimChecker
     answerFormatter.ts
@@ -165,6 +172,12 @@ export function createResolveCompanyTool(deps) { return defineTool({ ..., execut
 - All tests use fixtures/mocks. Never make real HTTP calls to SEC EDGAR or API Ninjas in tests.
 - Inject `fetch` into clients so tests can substitute a stub without patching globals.
 - `packages/ai` and `packages/coding-agent` have 3 pre-existing failing tests in the Pi source that require Node 22 to run `.ts` files directly. Not caused by finance-agent code.
+- If you create or modify a test file, run it and iterate until it passes before moving on.
+
+### Code changes
+- Read files in full before making wide-ranging changes or editing files you have not fully inspected.
+- Always ask before removing functionality or code that appears intentional.
+- Do not preserve backward compatibility unless the user asks for it.
 
 ### Guardrails
 - Personalized buy/sell/hold advice must be refused — `financialAdviceGuard` has 13 regex patterns.
