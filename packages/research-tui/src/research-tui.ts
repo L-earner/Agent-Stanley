@@ -1,4 +1,4 @@
-import { AuthStorage } from "@earendil-works/pi-coding-agent";
+import { AuthStorage, DynamicBorder } from "@earendil-works/pi-coding-agent";
 import type { ResearchAgentRuntime } from "@earendil-works/pi-research-agent";
 import { Container, Input, Markdown, ProcessTerminal, Spacer, Text, TUI } from "@earendil-works/pi-tui";
 import { AnalystAnswerComponent } from "./components/analyst-answer.ts";
@@ -8,7 +8,7 @@ import { StreamingTextComponent } from "./components/streaming-text.ts";
 import { ToolCallComponent } from "./components/tool-call.ts";
 import { UserMessageComponent } from "./components/user-message.ts";
 import { detectProvider, hasAnyLlmConfigured, loadConfig, saveConfig } from "./config.ts";
-import { ansi, markdownTheme } from "./theme.ts";
+import { markdownTheme, theme } from "./theme.ts";
 
 const WELCOME =
 	`**Finance Research Analyst**\n` +
@@ -44,15 +44,21 @@ export class ResearchTUI {
 		this.input = new Input();
 		this.input.onSubmit = (value) => this.handleSubmit(value);
 
+		// ── Layout (top → bottom) ──────────────────────────────────────
 		// Welcome banner
 		this.tui.addChild(new Spacer(1));
-		this.tui.addChild(new Markdown(WELCOME, 1, 0, markdownTheme));
+		this.tui.addChild(new Markdown(WELCOME, 1, 0, markdownTheme, { color: (s) => theme.dim(s) }));
 		this.tui.addChild(new Spacer(1));
 
+		// Scrolling conversation area
 		this.tui.addChild(this.chatHistory);
 		this.tui.addChild(this.activeTurn);
-		this.tui.addChild(this.footer);
+
+		// Input area — border above, input, footer below (matches Pi's editor layout)
+		this.tui.addChild(new DynamicBorder((s: string) => theme.border(s)));
 		this.tui.addChild(this.input);
+		this.tui.addChild(this.footer);
+		// ──────────────────────────────────────────────────────────────
 
 		// Global key handler
 		this.tui.addInputListener((data) => {
@@ -77,11 +83,10 @@ export class ResearchTUI {
 
 	start(): void {
 		this.tui.start();
-		// Run setup check asynchronously; input is not focused until setup completes
 		this.footer.setStatus("starting…");
 		this.initializeAsync().catch((err) => {
 			const msg = err instanceof Error ? err.message : String(err);
-			this.chatHistory.addChild(new Text(ansi.red(`⚠  Startup error: ${msg}`), 1, 1));
+			this.chatHistory.addChild(new Text(theme.error(`⚠  Startup error: ${msg}`), 1, 1));
 			this.footer.setStatus("error");
 			this.tui.requestRender();
 		});
@@ -96,7 +101,6 @@ export class ResearchTUI {
 		const authStorage = AuthStorage.create();
 		const config = loadConfig();
 
-		// Apply saved Ninjas key to env before toolDeps are built
 		if (!process.env.API_NINJAS_KEY && config.apiNinjasKey) {
 			process.env.API_NINJAS_KEY = config.apiNinjasKey;
 		}
@@ -108,8 +112,11 @@ export class ResearchTUI {
 			await this.runSetup(authStorage, config, needsLlm, needsNinjas);
 		}
 
-		// Build the runtime now that env vars are in place
 		this.runtime = this.runtimeFactory();
+
+		// Show model hint in footer if set
+		const model = process.env.PI_RESEARCH_MODEL ?? process.env.PI_MODEL ?? "";
+		if (model) this.footer.setModel(model);
 
 		this.tui.setFocus(this.input);
 		this.footer.setStatus("ready");
@@ -126,13 +133,11 @@ export class ResearchTUI {
 			const screen = new SetupScreenComponent(this.tui, authStorage, needsLlm, needsNinjas, (result) => {
 				overlayHandle.hide();
 
-				// Persist LLM key to Pi's auth.json
 				if (result.llmKey) {
 					const detected = detectProvider(result.llmKey);
 					authStorage.set(detected.provider, { type: "api_key", key: result.llmKey });
 				}
 
-				// Persist Ninjas key to our config + process.env
 				if (result.ninjasKey) {
 					process.env.API_NINJAS_KEY = result.ninjasKey;
 					saveConfig({ ...config, apiNinjasKey: result.ninjasKey });
@@ -186,11 +191,10 @@ export class ResearchTUI {
 					case "tool_start": {
 						const toolCall = new ToolCallComponent(this.tui, event.toolName, event.inputSummary ?? "");
 						this.activeToolCalls.set(event.toolName, toolCall);
-						// Keep tools above the streaming text
 						this.activeTurn.removeChild(this.streamingText);
 						this.activeTurn.addChild(toolCall);
 						this.activeTurn.addChild(this.streamingText);
-						this.footer.setStatus(ansi.dim(`${event.toolName}…`), true);
+						this.footer.setStatus(theme.dim(`${event.toolName}…`), true);
 						this.tui.requestRender();
 						break;
 					}
@@ -198,12 +202,11 @@ export class ResearchTUI {
 					case "tool_result": {
 						const toolCall = this.activeToolCalls.get(event.toolName);
 						if (toolCall) toolCall.setDone(event.resultSummary ?? "");
-						this.footer.setStatus(ansi.dim("thinking…"), true);
+						this.footer.setStatus(theme.dim("thinking…"), true);
 						break;
 					}
 
 					case "evidence":
-						// Informational only — no UI update needed
 						break;
 
 					case "final":
@@ -215,7 +218,7 @@ export class ResearchTUI {
 
 					case "error":
 						this.activeTurn.removeChild(this.streamingText);
-						this.activeTurn.addChild(new Text(ansi.red(`⚠  ${event.message}`), 1, 1));
+						this.activeTurn.addChild(new Text(theme.error(`⚠  ${event.message}`), 1, 1));
 						concluded = true;
 						this.tui.requestRender();
 						break;
@@ -225,7 +228,7 @@ export class ResearchTUI {
 			if (!signal.aborted && !concluded) {
 				const msg = err instanceof Error ? err.message : String(err);
 				this.activeTurn.removeChild(this.streamingText);
-				this.activeTurn.addChild(new Text(ansi.red(`⚠  ${msg}`), 1, 1));
+				this.activeTurn.addChild(new Text(theme.error(`⚠  ${msg}`), 1, 1));
 				concluded = true;
 				this.tui.requestRender();
 			}
@@ -234,7 +237,7 @@ export class ResearchTUI {
 		if (!concluded) {
 			this.activeTurn.removeChild(this.streamingText);
 			if (signal.aborted) {
-				this.activeTurn.addChild(new Text(ansi.dimGray("(cancelled)"), 1, 0));
+				this.activeTurn.addChild(new Text(theme.dim("(cancelled)"), 1, 0));
 			} else if (this.streamingText.getContent()) {
 				this.activeTurn.addChild(new Markdown(this.streamingText.getContent(), 1, 0, markdownTheme));
 			}

@@ -1,7 +1,7 @@
 import type { AuthStorage } from "@earendil-works/pi-coding-agent";
 import { type Component, type Focusable, Input, matchesKey, type TUI } from "@earendil-works/pi-tui";
 import { detectProvider } from "../config.ts";
-import { ansi } from "../theme.ts";
+import { theme } from "../theme.ts";
 
 export interface SetupResult {
 	llmKey?: string;
@@ -114,60 +114,60 @@ export class SetupScreenComponent implements Component, Focusable {
 	render(width: number): string[] {
 		const lines: string[] = [];
 		const pad = "  ";
-		const divider = ansi.dimGray("─".repeat(Math.max(1, width)));
+		const divider = theme.dim("─".repeat(Math.max(1, width)));
 
 		const push = (line = "") => lines.push(line);
 
 		push(divider);
 		push();
-		push(`${pad}${ansi.bold(ansi.cyan("Finance Research Analyst — Setup"))}`);
-		push(`${pad}${ansi.dim("Configure API keys below, or press Esc to skip and rely on environment variables.")}`);
+		push(`${pad}${theme.accentBold("Finance Research Analyst — Setup")}`);
+		push(`${pad}${theme.dim("Configure API keys below, or press Esc to skip and rely on environment variables.")}`);
 		push();
 
 		// LLM section
 		if (this.needsLlm) {
-			push(`${pad}${ansi.bold("LLM Provider API Key")}`);
-			push(`${pad}${ansi.dim("Accepted prefixes:")}`);
-			push(`${pad}  ${ansi.gray("sk-ant-…")}   Anthropic (Claude)`);
-			push(`${pad}  ${ansi.gray("sk-…")}       OpenAI (GPT)`);
-			push(`${pad}  ${ansi.gray("AIza…")}      Google (Gemini)`);
-			push(`${pad}  ${ansi.gray("sk-or-…")}    OpenRouter`);
-			push(`${pad}  ${ansi.gray("gsk_…")}      Groq`);
+			push(`${pad}${theme.bold("LLM Provider API Key")}`);
+			push(`${pad}${theme.dim("Accepted prefixes:")}`);
+			push(`${pad}  ${theme.muted("sk-ant-…")}   Anthropic (Claude)`);
+			push(`${pad}  ${theme.muted("sk-…")}       OpenAI (GPT)`);
+			push(`${pad}  ${theme.muted("AIza…")}      Google (Gemini)`);
+			push(`${pad}  ${theme.muted("sk-or-…")}    OpenRouter`);
+			push(`${pad}  ${theme.muted("gsk_…")}      Groq`);
 			push();
 			const llmLines = this.llmInput.render(width - 4);
-			const cursor = this.activeField === "llm" ? ansi.green("▶") : " ";
+			const cursor = this.activeField === "llm" ? theme.success("▶") : " ";
 			for (const l of llmLines) lines.push(`${pad}${cursor} ${l}`);
 			if (this.detectedLabel) {
-				push(`${pad}   ${ansi.green("✓")} ${ansi.cyan(this.detectedLabel)}`);
+				push(`${pad}   ${theme.success("✓")} ${theme.accent(this.detectedLabel)}`);
 			} else {
 				push();
 			}
 			push();
 		} else {
-			push(`${pad}${ansi.green("✓")}  LLM provider already configured`);
+			push(`${pad}${theme.success("✓")}  LLM provider already configured`);
 			push();
 		}
 
 		// Ninjas section
 		if (this.needsNinjas) {
-			push(`${pad}${ansi.bold("API Ninjas Key")}`);
-			push(`${pad}${ansi.dim("Needed for SEC filings and earnings transcripts.")}`);
-			push(`${pad}${ansi.dim("Free tier available — sign up at")} ${ansi.underline("https://api-ninjas.com")}`);
+			push(`${pad}${theme.bold("API Ninjas Key")}`);
+			push(`${pad}${theme.dim("Needed for SEC filings and earnings transcripts.")}`);
+			push(`${pad}${theme.dim("Free tier available — sign up at")} ${theme.underline("https://api-ninjas.com")}`);
 			push();
 			const ninjasLines = this.ninjasInput.render(width - 4);
-			const cursor = this.activeField === "ninjas" ? ansi.green("▶") : " ";
+			const cursor = this.activeField === "ninjas" ? theme.success("▶") : " ";
 			for (const l of ninjasLines) lines.push(`${pad}${cursor} ${l}`);
 			push();
 		} else {
-			push(`${pad}${ansi.green("✓")}  API Ninjas key already configured`);
+			push(`${pad}${theme.success("✓")}  API Ninjas key already configured`);
 			push();
 		}
 
 		// Key hints
 		const parts: string[] = [];
-		if (this.needsLlm && this.needsNinjas) parts.push(`${ansi.dim("Tab")} switch field`);
-		parts.push(`${ansi.dim("Enter")} save & launch`);
-		parts.push(`${ansi.dim("Esc")} skip`);
+		if (this.needsLlm && this.needsNinjas) parts.push(`${theme.dim("Tab")} switch field`);
+		parts.push(`${theme.dim("Enter")} save & launch`);
+		parts.push(`${theme.dim("Esc")} skip`);
 		push(`${pad}${parts.join("   ")}`);
 		push();
 		push(divider);

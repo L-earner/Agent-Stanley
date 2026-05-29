@@ -1,6 +1,6 @@
 import type { AnalystAnswer } from "@earendil-works/pi-research-agent";
 import { Container, Markdown, Spacer, Text } from "@earendil-works/pi-tui";
-import { ansi, markdownTheme } from "../theme.ts";
+import { markdownTheme, theme } from "../theme.ts";
 
 function buildKeyPointsMd(answer: AnalystAnswer): string {
 	const evidenceToNum = new Map<string, number>();
@@ -28,11 +28,11 @@ function buildTableMd(table: NonNullable<AnalystAnswer["tables"]>[number]): stri
 
 function buildSourcesText(answer: AnalystAnswer): string {
 	const lines = answer.sources.map((s, i) => {
-		const loc = s.locator ? `  ${ansi.dimGray(s.locator)}` : "";
-		const url = s.url ? `  ${ansi.dimGray(s.url)}` : "";
-		return `  ${ansi.gray(`[${i + 1}]`)} ${ansi.bold(s.title)}  ${ansi.dim(`(${s.sourceType})`)}${loc}${url}`;
+		const loc = s.locator ? `  ${theme.dim(s.locator)}` : "";
+		const url = s.url ? `  ${theme.dim(s.url)}` : "";
+		return `  ${theme.muted(`[${i + 1}]`)} ${theme.bold(s.title)}  ${theme.dim(`(${s.sourceType})`)}${loc}${url}`;
 	});
-	return `${ansi.dim("Sources")}\n${lines.join("\n")}`;
+	return `${theme.dim("Sources")}\n${lines.join("\n")}`;
 }
 
 export class AnalystAnswerComponent extends Container {
@@ -74,7 +74,7 @@ export class AnalystAnswerComponent extends Container {
 		if (!answer.verification.supported || answer.verification.warnings.length > 0) {
 			this.addChild(new Spacer(1));
 			const warnings = answer.verification.warnings.map((w) => `⚠  ${w}`).join("\n");
-			this.addChild(new Text(ansi.yellow(warnings || "⚠  Answer could not be fully verified."), 1, 0));
+			this.addChild(new Text(theme.warning(warnings || "⚠  Answer could not be fully verified."), 1, 0));
 		}
 
 		this.addChild(new Spacer(1));
