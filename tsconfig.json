@@ -4,6 +4,8 @@
 		"noEmit": true,
 		"paths": {
 			"*": ["./*"],
+			"@earendil-works/pi-tui": ["./packages/tui/src/index.ts"],
+			"@earendil-works/pi-tui/*": ["./packages/tui/src/*"],
 			"@earendil-works/pi-ai": ["./packages/ai/src/index.ts"],
 			"@earendil-works/pi-ai/oauth": ["./packages/ai/src/oauth.ts"],
 			"@earendil-works/pi-ai/*": ["./packages/ai/src/*.ts", "./packages/ai/src/providers/*.ts"],
@@ -14,10 +16,16 @@
 			"@earendil-works/pi-coding-agent/hooks": ["./packages/coding-agent/src/core/hooks/index.ts"],
 			"@earendil-works/pi-coding-agent/*": ["./packages/coding-agent/src/*"],
 			"typebox": ["./node_modules/typebox"],
-			"@earendil-works/pi-tui": ["./packages/tui/src/index.ts"],
-			"@earendil-works/pi-tui/*": ["./packages/tui/src/*"],
-			"@earendil-works/pi-agent-old": ["./packages/agent-old/src/index.ts"],
-			"@earendil-works/pi-agent-old/*": ["./packages/agent-old/src/*"]
+			"@earendil-works/pi-research-db": ["./packages/research-db/src/index.ts"],
+			"@earendil-works/pi-research-db/*": ["./packages/research-db/src/*"],
+			"@earendil-works/pi-sec-ingestion": ["./packages/sec-ingestion/src/index.ts"],
+			"@earendil-works/pi-sec-ingestion/*": ["./packages/sec-ingestion/src/*"],
+			"@earendil-works/pi-transcript-ingestion": ["./packages/transcript-ingestion/src/index.ts"],
+			"@earendil-works/pi-transcript-ingestion/*": ["./packages/transcript-ingestion/src/*"],
+			"@earendil-works/pi-research-agent": ["./packages/research-agent/src/index.ts"],
+			"@earendil-works/pi-research-agent/*": ["./packages/research-agent/src/*"],
+			"@earendil-works/pi-web-app": ["./packages/web-app/src/index.ts"],
+			"@earendil-works/pi-web-app/*": ["./packages/web-app/src/*"]
 		}
 	},
 	"include": ["packages/*/src/**/*", "packages/*/test/**/*", "packages/coding-agent/examples/**/*"],
