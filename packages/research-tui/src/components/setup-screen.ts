@@ -1,5 +1,5 @@
 import type { AuthStorage } from "@earendil-works/pi-coding-agent";
-import { type Component, type Focusable, Input, matchesKey, type TUI } from "@earendil-works/pi-tui";
+import { type Component, type Focusable, getKeybindings, Input, type TUI } from "@earendil-works/pi-tui";
 import { detectProvider } from "../config.ts";
 import { theme } from "../theme.ts";
 
@@ -86,14 +86,24 @@ export class SetupScreenComponent implements Component, Focusable {
 	}
 
 	handleInput(data: string): void {
-		if (matchesKey(data, "escape")) {
+		const keybindings = getKeybindings();
+
+		if (keybindings.matches(data, "tui.select.cancel")) {
 			this.onComplete({});
 			return;
 		}
-		if (matchesKey(data, "tab") || matchesKey(data, "shift+tab")) {
+		if (keybindings.matches(data, "tui.input.tab")) {
 			if (this.needsLlm && this.needsNinjas) {
 				this.switchTo(this.activeField === "llm" ? "ninjas" : "llm");
 			}
+			return;
+		}
+		if (keybindings.matches(data, "tui.select.up")) {
+			if (this.needsLlm) this.switchTo("llm");
+			return;
+		}
+		if (keybindings.matches(data, "tui.select.down")) {
+			if (this.needsNinjas) this.switchTo("ninjas");
 			return;
 		}
 		if (this.activeField === "llm") {
@@ -104,6 +114,12 @@ export class SetupScreenComponent implements Component, Focusable {
 			this.ninjasInput.handleInput(data);
 		}
 		this.tui.requestRender();
+	}
+
+	private fieldTitle(field: Field, title: string, index: number, total: number): string {
+		const marker = this.activeField === field ? theme.success("▶") : " ";
+		const label = `${marker} ${index}/${total} ${title}`;
+		return this.activeField === field ? theme.accentBold(label) : theme.bold(label);
 	}
 
 	invalidate(): void {
@@ -124,9 +140,12 @@ export class SetupScreenComponent implements Component, Focusable {
 		push(`${pad}${theme.dim("Configure API keys below, or press Esc to skip and rely on environment variables.")}`);
 		push();
 
+		const totalFields = Number(this.needsLlm) + Number(this.needsNinjas);
+		let fieldIndex = 1;
+
 		// LLM section
 		if (this.needsLlm) {
-			push(`${pad}${theme.bold("LLM Provider API Key")}`);
+			push(`${pad}${this.fieldTitle("llm", "LLM Provider API Key", fieldIndex++, totalFields)}`);
 			push(`${pad}${theme.dim("Accepted prefixes:")}`);
 			push(`${pad}  ${theme.muted("sk-ant-…")}   Anthropic (Claude)`);
 			push(`${pad}  ${theme.muted("sk-…")}       OpenAI (GPT)`);
@@ -135,12 +154,12 @@ export class SetupScreenComponent implements Component, Focusable {
 			push(`${pad}  ${theme.muted("gsk_…")}      Groq`);
 			push();
 			const llmLines = this.llmInput.render(width - 4);
-			const cursor = this.activeField === "llm" ? theme.success("▶") : " ";
+			const cursor = this.activeField === "llm" ? theme.success("›") : " ";
 			for (const l of llmLines) lines.push(`${pad}${cursor} ${l}`);
 			if (this.detectedLabel) {
 				push(`${pad}   ${theme.success("✓")} ${theme.accent(this.detectedLabel)}`);
 			} else {
-				push();
+				push(`${pad}   ${theme.dim("Enter moves to the next field")}`);
 			}
 			push();
 		} else {
@@ -150,13 +169,14 @@ export class SetupScreenComponent implements Component, Focusable {
 
 		// Ninjas section
 		if (this.needsNinjas) {
-			push(`${pad}${theme.bold("API Ninjas Key")}`);
+			push(`${pad}${this.fieldTitle("ninjas", "API Ninjas Key", fieldIndex++, totalFields)}`);
 			push(`${pad}${theme.dim("Needed for SEC filings and earnings transcripts.")}`);
 			push(`${pad}${theme.dim("Free tier available — sign up at")} ${theme.underline("https://api-ninjas.com")}`);
 			push();
 			const ninjasLines = this.ninjasInput.render(width - 4);
-			const cursor = this.activeField === "ninjas" ? theme.success("▶") : " ";
+			const cursor = this.activeField === "ninjas" ? theme.success("›") : " ";
 			for (const l of ninjasLines) lines.push(`${pad}${cursor} ${l}`);
+			push(`${pad}   ${theme.dim("Enter saves and launches")}`);
 			push();
 		} else {
 			push(`${pad}${theme.success("✓")}  API Ninjas key already configured`);
@@ -165,8 +185,8 @@ export class SetupScreenComponent implements Component, Focusable {
 
 		// Key hints
 		const parts: string[] = [];
-		if (this.needsLlm && this.needsNinjas) parts.push(`${theme.dim("Tab")} switch field`);
-		parts.push(`${theme.dim("Enter")} save & launch`);
+		if (this.needsLlm && this.needsNinjas) parts.push(`${theme.dim("Up/Down or Tab")} switch field`);
+		parts.push(`${theme.dim("Enter")} continue/save`);
 		parts.push(`${theme.dim("Esc")} skip`);
 		push(`${pad}${parts.join("   ")}`);
 		push();
