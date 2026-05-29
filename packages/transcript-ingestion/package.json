@@ -1,0 +1,32 @@
+{
+	"name": "@earendil-works/pi-transcript-ingestion",
+	"version": "0.1.0",
+	"description": "Earnings call transcript ingestion for the financial research analyst engine",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"clean": "shx rm -rf dist",
+		"build": "tsgo -p tsconfig.build.json",
+		"test": "vitest --run",
+		"typecheck": "tsgo --noEmit"
+	},
+	"dependencies": {
+		"@earendil-works/pi-research-db": "^0.1.0"
+	},
+	"devDependencies": {
+		"@types/node": "24.12.4",
+		"shx": "0.4.0",
+		"typescript": "5.9.3",
+		"vitest": "3.2.4"
+	},
+	"engines": {
+		"node": ">=22.19.0"
+	}
+}

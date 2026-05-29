@@ -1,0 +1,92 @@
+{
+  "date": "2023-11-02",
+  "timestamp": 1698930600,
+  "ticker": "AAPL",
+  "cik": "320193",
+  "year": 2023,
+  "quarter": 4,
+  "earnings_timing": "after_market",
+  "transcript": "Operator: Good afternoon. My name is Brad and I will be your conference operator today. At this time, I would like to welcome everyone to the Apple Q4 Fiscal Year 2023 Earnings Conference Call. Today's call is being recorded.\n\nTim Cook: Thank you. Good afternoon, everyone. We are pleased to report Apple's September quarter results, which include an all-time revenue record for Services and new September quarter revenue records in over two dozen countries and regions. Revenue for the quarter was $89.5 billion, down 1% from a year ago. iPhone revenue was $43.8 billion, up 3% year over year. Mac revenue was $7.6 billion, down 34%. iPad revenue was $6.4 billion, down 10%. Wearables, Home and Accessories was $9.3 billion, down 3%. And Services was a record $22.3 billion, up 16% year over year. We now have more than 1 billion paid subscriptions across our platform.\n\nLuca Maestri: Thank you, Tim, and good afternoon everyone. Revenue for the September quarter was $89.5 billion, which is in line with our expectations. Gross margin was 45.2%, at the high end of our guidance range. Operating income was $26.6 billion. Net income was $22.96 billion and diluted earnings per share were $1.46, a new September quarter record. We generated $21.2 billion in operating cash flow. During the quarter we returned $25 billion to our shareholders, including $3.8 billion in dividends and $21.2 billion in share repurchases. For the December quarter we expect revenue to be similar to the $117.2 billion in revenue we reported last year.\n\nErik Woodring: Great, thank you. Tim, can you talk about what you are seeing on the iPhone demand side? The lead times came in much better than expected. Can you expand on that and what you are seeing more broadly in terms of consumer demand?\n\nTim Cook: Yes, we feel very good about the iPhone 15 lineup. We are seeing strong customer interest in iPhone 15 Pro and iPhone 15 Pro Max in particular. We have the most dynamic camera system we have ever shipped. We have the titanium design. The early indicators are positive. We are growing in emerging markets and upgrade rates remain healthy. We are also benefiting from the increasing installed base globally.\n\nShannon Cross: Can you talk about the Services growth and what is specifically driving the acceleration to 16% and how you think about that trajectory going forward?\n\nLuca Maestri: Shannon, we set an all-time revenue record for Services at $22.3 billion, up 16% year over year. We now have more than 1 billion paid subscriptions across our platform, which is up 150 million from a year ago. The App Store, Apple Music, Apple TV Plus, and iCloud are all growing strongly. We are seeing engagement increase across all major geographic segments. We expect Services to grow double digits in the December quarter as well.\n\nOperator: Thank you. That concludes today's question and answer session. I would like to turn the call back to Tejas Gala for closing remarks.",
+  "transcript_split": [
+    {
+      "speaker": "Operator",
+      "company": "",
+      "role": "Operator",
+      "text": "Good afternoon. My name is Brad and I will be your conference operator today. At this time, I would like to welcome everyone to the Apple Q4 Fiscal Year 2023 Earnings Conference Call. Today's call is being recorded.",
+      "speaker_type": "operator",
+      "is_qa": false,
+      "sentiment": 0.0,
+      "sentiment_rationale": "Neutral operator introduction"
+    },
+    {
+      "speaker": "Tim Cook",
+      "company": "Apple Inc.",
+      "role": "Chief Executive Officer",
+      "text": "Thank you. Good afternoon, everyone. We are pleased to report Apple's September quarter results, which include an all-time revenue record for Services and new September quarter revenue records in over two dozen countries and regions. Revenue for the quarter was $89.5 billion, down 1% from a year ago. iPhone revenue was $43.8 billion, up 3% year over year. Mac revenue was $7.6 billion, down 34%. iPad revenue was $6.4 billion, down 10%. Wearables, Home and Accessories was $9.3 billion, down 3%. And Services was a record $22.3 billion, up 16% year over year. We now have more than 1 billion paid subscriptions across our platform.",
+      "speaker_type": "management",
+      "is_qa": false,
+      "sentiment": 0.4,
+      "sentiment_rationale": "Positive on Services record, mixed on hardware declines"
+    },
+    {
+      "speaker": "Luca Maestri",
+      "company": "Apple Inc.",
+      "role": "Chief Financial Officer",
+      "text": "Thank you, Tim, and good afternoon everyone. Revenue for the September quarter was $89.5 billion, which is in line with our expectations. Gross margin was 45.2%, at the high end of our guidance range. Operating income was $26.6 billion. Net income was $22.96 billion and diluted earnings per share were $1.46, a new September quarter record. We generated $21.2 billion in operating cash flow. During the quarter we returned $25 billion to our shareholders, including $3.8 billion in dividends and $21.2 billion in share repurchases. For the December quarter we expect revenue to be similar to the $117.2 billion in revenue we reported last year.",
+      "speaker_type": "management",
+      "is_qa": false,
+      "sentiment": 0.35,
+      "sentiment_rationale": "Solid margins and cash flow, cautious guidance"
+    },
+    {
+      "speaker": "Erik Woodring",
+      "company": "Morgan Stanley",
+      "role": "Analyst",
+      "text": "Great, thank you. Tim, can you talk about what you are seeing on the iPhone demand side? The lead times came in much better than expected. Can you expand on that and what you are seeing more broadly in terms of consumer demand?",
+      "speaker_type": "investor",
+      "is_qa": true,
+      "sentiment": 0.2,
+      "sentiment_rationale": "Positive framing of the question"
+    },
+    {
+      "speaker": "Tim Cook",
+      "company": "Apple Inc.",
+      "role": "Chief Executive Officer",
+      "text": "Yes, we feel very good about the iPhone 15 lineup. We are seeing strong customer interest in iPhone 15 Pro and iPhone 15 Pro Max in particular. We have the most dynamic camera system we have ever shipped. We have the titanium design. The early indicators are positive. We are growing in emerging markets and upgrade rates remain healthy. We are also benefiting from the increasing installed base globally.",
+      "speaker_type": "management",
+      "is_qa": true,
+      "sentiment": 0.5,
+      "sentiment_rationale": "Clearly positive on iPhone 15 demand and emerging markets"
+    },
+    {
+      "speaker": "Shannon Cross",
+      "company": "Credit Suisse",
+      "role": "Analyst",
+      "text": "Can you talk about the Services growth and what is specifically driving the acceleration to 16% and how you think about that trajectory going forward?",
+      "speaker_type": "investor",
+      "is_qa": true,
+      "sentiment": 0.3,
+      "sentiment_rationale": "Neutral analytical question"
+    },
+    {
+      "speaker": "Luca Maestri",
+      "company": "Apple Inc.",
+      "role": "Chief Financial Officer",
+      "text": "Shannon, we set an all-time revenue record for Services at $22.3 billion, up 16% year over year. We now have more than 1 billion paid subscriptions across our platform, which is up 150 million from a year ago. The App Store, Apple Music, Apple TV Plus, and iCloud are all growing strongly. We are seeing engagement increase across all major geographic segments. We expect Services to grow double digits in the December quarter as well.",
+      "speaker_type": "management",
+      "is_qa": true,
+      "sentiment": 0.6,
+      "sentiment_rationale": "Very positive on Services momentum and forward guidance"
+    },
+    {
+      "speaker": "Operator",
+      "company": "",
+      "role": "Operator",
+      "text": "Thank you. That concludes today's question and answer session. I would like to turn the call back to Tejas Gala for closing remarks.",
+      "speaker_type": "operator",
+      "is_qa": true,
+      "sentiment": 0.0,
+      "sentiment_rationale": "Neutral closing"
+    }
+  ]
+}

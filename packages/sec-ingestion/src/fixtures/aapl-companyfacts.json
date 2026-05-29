@@ -1,0 +1,236 @@
+{
+  "cik": 320193,
+  "entityName": "Apple Inc.",
+  "facts": {
+    "us-gaap": {
+      "RevenueFromContractWithCustomerExcludingAssessedTax": {
+        "label": "Revenue from Contract with Customer, Excluding Assessed Tax",
+        "description": "Amount, excluding tax collected from customer, of revenue from satisfaction of performance obligation.",
+        "units": {
+          "USD": [
+            {
+              "start": "2020-09-27",
+              "end": "2021-09-25",
+              "val": 365817000000,
+              "accn": "0000320193-21-000105",
+              "fy": 2021,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2021-10-29",
+              "frame": "CY2021"
+            },
+            {
+              "start": "2021-09-26",
+              "end": "2022-09-24",
+              "val": 394328000000,
+              "accn": "0000320193-22-000108",
+              "fy": 2022,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2022-10-28",
+              "frame": "CY2022"
+            },
+            {
+              "start": "2022-09-25",
+              "end": "2023-09-30",
+              "val": 383285000000,
+              "accn": "0000320193-23-000106",
+              "fy": 2023,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2023-11-03",
+              "frame": "CY2023"
+            },
+            {
+              "start": "2023-10-01",
+              "end": "2023-12-30",
+              "val": 119575000000,
+              "accn": "0000320193-24-000011",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-02-02",
+              "frame": "CY2023Q4"
+            }
+          ]
+        }
+      },
+      "GrossProfit": {
+        "label": "Gross Profit",
+        "description": "Aggregate revenue less cost of goods and services sold or operating expenses directly attributable to the revenue generation activity.",
+        "units": {
+          "USD": [
+            {
+              "start": "2021-09-26",
+              "end": "2022-09-24",
+              "val": 170782000000,
+              "accn": "0000320193-22-000108",
+              "fy": 2022,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2022-10-28",
+              "frame": "CY2022"
+            },
+            {
+              "start": "2022-09-25",
+              "end": "2023-09-30",
+              "val": 169148000000,
+              "accn": "0000320193-23-000106",
+              "fy": 2023,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2023-11-03",
+              "frame": "CY2023"
+            },
+            {
+              "start": "2023-10-01",
+              "end": "2023-12-30",
+              "val": 54357000000,
+              "accn": "0000320193-24-000011",
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-02-02",
+              "frame": "CY2023Q4"
+            }
+          ]
+        }
+      },
+      "OperatingIncomeLoss": {
+        "label": "Operating Income (Loss)",
+        "description": "The net result for the period of deducting operating expenses from operating revenues.",
+        "units": {
+          "USD": [
+            {
+              "start": "2021-09-26",
+              "end": "2022-09-24",
+              "val": 119437000000,
+              "accn": "0000320193-22-000108",
+              "fy": 2022,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2022-10-28",
+              "frame": "CY2022"
+            },
+            {
+              "start": "2022-09-25",
+              "end": "2023-09-30",
+              "val": 114301000000,
+              "accn": "0000320193-23-000106",
+              "fy": 2023,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2023-11-03",
+              "frame": "CY2023"
+            }
+          ]
+        }
+      },
+      "NetIncomeLoss": {
+        "label": "Net Income (Loss) Attributable to Parent",
+        "description": "The portion of profit or loss for the period, net of income taxes, which is attributable to the parent.",
+        "units": {
+          "USD": [
+            {
+              "start": "2021-09-26",
+              "end": "2022-09-24",
+              "val": 99803000000,
+              "accn": "0000320193-22-000108",
+              "fy": 2022,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2022-10-28",
+              "frame": "CY2022"
+            },
+            {
+              "start": "2022-09-25",
+              "end": "2023-09-30",
+              "val": 96995000000,
+              "accn": "0000320193-23-000106",
+              "fy": 2023,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2023-11-03",
+              "frame": "CY2023"
+            }
+          ]
+        }
+      },
+      "AssetsCurrent": {
+        "label": "Assets, Current",
+        "description": "Sum of the carrying amounts as of the balance sheet date of all assets that are expected to be realized in cash, sold, or consumed within one year.",
+        "units": {
+          "USD": [
+            {
+              "end": "2022-09-24",
+              "val": 135405000000,
+              "accn": "0000320193-22-000108",
+              "fy": 2022,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2022-10-28",
+              "frame": "CY2022Q4I"
+            },
+            {
+              "end": "2023-09-30",
+              "val": 143566000000,
+              "accn": "0000320193-23-000106",
+              "fy": 2023,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2023-11-03",
+              "frame": "CY2023Q4I"
+            }
+          ]
+        }
+      },
+      "LiabilitiesCurrent": {
+        "label": "Liabilities, Current",
+        "description": "Total obligations incurred as part of normal operations that are expected to be paid during the following twelve months.",
+        "units": {
+          "USD": [
+            {
+              "end": "2022-09-24",
+              "val": 153982000000,
+              "accn": "0000320193-22-000108",
+              "fy": 2022,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2022-10-28",
+              "frame": "CY2022Q4I"
+            },
+            {
+              "end": "2023-09-30",
+              "val": 145308000000,
+              "accn": "0000320193-23-000106",
+              "fy": 2023,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2023-11-03",
+              "frame": "CY2023Q4I"
+            }
+          ]
+        }
+      }
+    },
+    "dei": {
+      "EntityCommonStockSharesOutstanding": {
+        "label": "Entity Common Stock, Shares Outstanding",
+        "description": "Indicate number of shares outstanding of each of registrant's classes of capital or common stock.",
+        "units": {
+          "shares": [
+            {
+              "end": "2023-10-26",
+              "val": 15552752000,
+              "accn": "0000320193-23-000106",
+              "fy": 2023,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2023-11-03"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

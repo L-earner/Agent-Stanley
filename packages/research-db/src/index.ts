@@ -1,0 +1,60 @@
+export type {
+	CompanyFilters,
+	CompanyRepository,
+	EvidenceFilters,
+	EvidenceRepository,
+	FilingChunkFilters,
+	FilingChunkRepository,
+	FilingFilters,
+	FilingRepository,
+	TranscriptChunkFilters,
+	TranscriptChunkRepository,
+	TranscriptFilters,
+	TranscriptRepository,
+	XbrlFactFilters,
+	XbrlFactRepository,
+} from "./repositories/index.ts";
+export {
+	InMemoryCompanyRepository,
+	InMemoryEvidenceRepository,
+	InMemoryFilingChunkRepository,
+	InMemoryFilingRepository,
+	InMemoryTranscriptChunkRepository,
+	InMemoryTranscriptRepository,
+	InMemoryXbrlFactRepository,
+} from "./repositories/index.ts";
+export type {
+	Company,
+	Evidence,
+	EvidenceSourceType,
+	Filing,
+	FilingChunk,
+	FilingSection,
+	SectionType,
+	SpeakerRole,
+	Transcript,
+	TranscriptChunk,
+	TranscriptSection,
+	XbrlFact,
+} from "./schema.ts";
+
+export type {
+	EmbeddingProvider,
+	HybridSearchOptions,
+	LexicalResult,
+	LexicalSearchOptions,
+	RerankFn,
+	SearchResult,
+	VectorResult,
+	VectorSearchOptions,
+} from "./search/index.ts";
+export {
+	cosineSimilarity,
+	DeterministicEmbeddingProvider,
+	evidenceIdForChunk,
+	hybridSearch,
+	lexicalSearch,
+	searchResultToEvidence,
+	tokenize,
+	vectorSearch,
+} from "./search/index.ts";

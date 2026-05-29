@@ -1,0 +1,29 @@
+{
+	"name": "@earendil-works/pi-web-app",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"clean": "shx rm -rf dist",
+		"build": "tsgo -p tsconfig.build.json",
+		"start": "node --import tsx/esm src/server.ts",
+		"dev": "node --import tsx/esm --watch src/server.ts",
+		"test": "vitest --run",
+		"typecheck": "tsgo --noEmit -p tsconfig.build.json"
+	},
+	"dependencies": {
+		"@earendil-works/pi-research-agent": "^0.1.0",
+		"@earendil-works/pi-research-db": "^0.1.0",
+		"@earendil-works/pi-sec-ingestion": "^0.1.0",
+		"@earendil-works/pi-transcript-ingestion": "^0.1.0"
+	},
+	"devDependencies": {
+		"@types/node": "24.12.4",
+		"shx": "0.4.0",
+		"typescript": "5.9.3",
+		"vitest": "3.2.4"
+	},
+	"engines": {
+		"node": ">=22.19.0"
+	}
+}

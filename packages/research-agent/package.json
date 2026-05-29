@@ -1,0 +1,39 @@
+{
+	"name": "@earendil-works/pi-research-agent",
+	"version": "0.1.0",
+	"description": "Financial research analyst engine built on the Pi agent runtime",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"clean": "shx rm -rf dist",
+		"build": "tsgo -p tsconfig.build.json",
+		"eval": "node --import tsx/esm src/evals/localEvalRunner.ts",
+		"test": "vitest --run",
+		"typecheck": "tsgo --noEmit"
+	},
+	"dependencies": {
+		"@earendil-works/pi-agent-core": "^0.77.0",
+		"@earendil-works/pi-ai": "^0.77.0",
+		"@earendil-works/pi-coding-agent": "^0.77.0",
+		"@earendil-works/pi-research-db": "^0.1.0",
+		"@earendil-works/pi-sec-ingestion": "^0.1.0",
+		"@earendil-works/pi-transcript-ingestion": "^0.1.0",
+		"typebox": "1.1.38"
+	},
+	"devDependencies": {
+		"@types/node": "24.12.4",
+		"shx": "0.4.0",
+		"typescript": "5.9.3",
+		"vitest": "3.2.4"
+	},
+	"engines": {
+		"node": ">=22.19.0"
+	}
+}

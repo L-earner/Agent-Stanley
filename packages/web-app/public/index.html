@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance Research Analyst</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #263147;
+      --border: #334155;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-dark: #1d4ed8;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --indigo: #6366f1;
+      --radius: 12px;
+      --radius-sm: 6px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    header .logo {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--indigo));
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    header h1 { font-size: 17px; font-weight: 600; }
+    header p { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+    /* ── Main layout ── */
+    main {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ── Chat column ── */
+    #chat-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      scroll-behavior: smooth;
+    }
+
+    /* ── Message bubbles ── */
+    .msg { display: flex; gap: 12px; max-width: 820px; width: 100%; }
+    .msg.user { flex-direction: row-reverse; align-self: flex-end; }
+    .msg.assistant { align-self: flex-start; }
+
+    .avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0; margin-top: 2px;
+    }
+    .msg.user .avatar { background: var(--accent-dark); }
+    .msg.assistant .avatar { background: var(--surface2); border: 1px solid var(--border); }
+
+    .bubble {
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      line-height: 1.6;
+      font-size: 14px;
+      max-width: calc(100% - 44px);
+    }
+    .msg.user .bubble {
+      background: var(--accent-dark);
+      border-bottom-right-radius: 4px;
+    }
+    .msg.assistant .bubble {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+
+    /* ── Tool activity strip ── */
+    .tool-strip {
+      display: flex; flex-direction: column; gap: 6px;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 12px;
+      max-width: calc(100% - 44px);
+    }
+    .tool-item {
+      display: flex; align-items: center; gap: 8px; color: var(--text-muted);
+    }
+    .tool-item.running { color: var(--indigo); }
+    .tool-item.done { color: var(--green); }
+    .spinner {
+      width: 10px; height: 10px;
+      border: 2px solid transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    .dot-done { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Final answer card ── */
+    .answer-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      max-width: calc(100% - 44px);
+    }
+    .answer-body {
+      padding: 16px;
+      background: var(--surface);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    /* ── Key points ── */
+    .key-points {
+      padding: 0 16px 12px;
+      background: var(--surface);
+    }
+    .key-points h4 { font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--text-muted); margin-bottom: 8px; }
+    .key-point {
+      display: flex; gap: 8px; align-items: flex-start;
+      font-size: 13px; margin-bottom: 6px; color: var(--text);
+    }
+    .key-point::before { content: "•"; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Verification badge ── */
+    .verification {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+      margin: 0 16px 12px;
+    }
+    .verification.ok { background: rgba(16,185,129,.15); color: var(--green); border: 1px solid rgba(16,185,129,.3); }
+    .verification.warn { background: rgba(239,68,68,.15); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
+    .verification-warnings { padding: 0 16px 12px; font-size: 12px; color: var(--red); }
+    .verification-warnings li { margin-left: 14px; margin-bottom: 3px; }
+
+    /* ── Caveats ── */
+    .caveats {
+      margin: 0 16px 12px;
+      padding: 10px 12px;
+      background: rgba(245,158,11,.1);
+      border: 1px solid rgba(245,158,11,.3);
+      border-radius: var(--radius-sm);
+      font-size: 12px; color: var(--amber);
+    }
+    .caveats h4 { font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .06em; margin-bottom: 6px; }
+    .caveats li { margin-left: 14px; margin-bottom: 3px; }
+
+    /* ── Evidence panel ── */
+    .evidence-toggle {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 16px;
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 12px; color: var(--text-muted);
+      user-select: none;
+      transition: color .15s;
+    }
+    .evidence-toggle:hover { color: var(--text); }
+    .evidence-toggle .chevron { transition: transform .2s; }
+    .evidence-toggle.open .chevron { transform: rotate(180deg); }
+    .evidence-list {
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+      padding: 12px;
+      display: none;
+      gap: 8px;
+      flex-direction: column;
+    }
+    .evidence-list.open { display: flex; }
+    .evidence-item {
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+    }
+    .evidence-item .ev-title { font-weight: 500; margin-bottom: 4px; color: var(--text); }
+    .evidence-item .ev-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .badge {
+      padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+    .badge.filing { background: rgba(59,130,246,.2); color: var(--accent); }
+    .badge.xbrl_fact { background: rgba(99,102,241,.2); color: var(--indigo); }
+    .badge.transcript { background: rgba(16,185,129,.2); color: var(--green); }
+    .ev-locator { color: var(--text-muted); }
+
+    /* ── Error message ── */
+    .error-msg {
+      padding: 12px 16px;
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.3);
+      border-radius: var(--radius);
+      font-size: 13px; color: var(--red);
+      max-width: calc(100% - 44px);
+    }
+
+    /* ── Thinking indicator ── */
+    .thinking {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--text-muted);
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      max-width: calc(100% - 44px);
+    }
+    .thinking-dots span {
+      display: inline-block; width: 6px; height: 6px;
+      background: var(--text-muted); border-radius: 50%;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    .thinking-dots span:nth-child(2) { animation-delay: .2s; }
+    .thinking-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes pulse { 0%, 80%, 100% { opacity: .2; transform: scale(.8); } 40% { opacity: 1; transform: scale(1); } }
+
+    /* ── Input bar ── */
+    #input-bar {
+      flex-shrink: 0;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      gap: 10px;
+    }
+    #query {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 14px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    #query:focus { border-color: var(--accent); }
+    #query::placeholder { color: var(--text-muted); }
+    #query:disabled { opacity: .5; cursor: not-allowed; }
+    #send {
+      background: var(--accent);
+      border: none; border-radius: var(--radius-sm);
+      color: #fff; font-size: 14px; font-weight: 600;
+      padding: 10px 20px; cursor: pointer;
+      transition: background .15s, opacity .15s;
+      white-space: nowrap;
+    }
+    #send:hover:not(:disabled) { background: var(--accent-dark); }
+    #send:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── Scrollbar ── */
+    #messages::-webkit-scrollbar { width: 6px; }
+    #messages::-webkit-scrollbar-track { background: transparent; }
+    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Welcome state ── */
+    #welcome {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 40px 20px; text-align: center; gap: 12px;
+    }
+    #welcome h2 { font-size: 20px; }
+    #welcome p { color: var(--text-muted); font-size: 14px; max-width: 420px; line-height: 1.6; }
+    .suggestions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px; }
+    .suggestion {
+      padding: 8px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px; color: var(--text-muted);
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .suggestion:hover { border-color: var(--accent); color: var(--text); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">📊</div>
+    <div>
+      <h1>Finance Research Analyst</h1>
+      <p>SEC filings · XBRL facts · Earnings transcripts</p>
+    </div>
+  </header>
+
+  <main>
+    <div id="chat-col">
+      <div id="messages">
+        <div id="welcome">
+          <h2>What would you like to research?</h2>
+          <p>Ask about public companies using SEC filings, XBRL structured data, and earnings call transcripts.</p>
+          <div class="suggestions">
+            <span class="suggestion" onclick="submit(this.textContent)">What is Apple's gross margin for FY2023?</span>
+            <span class="suggestion" onclick="submit(this.textContent)">Summarise AAPL revenue growth over the last 3 years</span>
+            <span class="suggestion" onclick="submit(this.textContent)">What did Apple's CFO say about Services in Q4 2023?</span>
+            <span class="suggestion" onclick="submit(this.textContent)">What are the main risk factors in Apple's 10-K?</span>
+          </div>
+        </div>
+      </div>
+      <div id="input-bar">
+        <input id="query" type="text" placeholder="Ask about a public company…" autocomplete="off" />
+        <button id="send" onclick="submitQuery()">Ask</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const messagesEl = document.getElementById('messages');
+    const queryEl = document.getElementById('query');
+    const sendBtn = document.getElementById('send');
+    let streaming = false;
+
+    queryEl.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitQuery(); }
+    });
+
+    function submitQuery() {
+      const q = queryEl.value.trim();
+      if (!q || streaming) return;
+      submit(q);
+    }
+
+    function submit(query) {
+      if (!query || streaming) return;
+      queryEl.value = '';
+      hideWelcome();
+      addUserMessage(query);
+      startStream(query);
+    }
+
+    function hideWelcome() {
+      const w = document.getElementById('welcome');
+      if (w) w.remove();
+    }
+
+    function setStreaming(val) {
+      streaming = val;
+      queryEl.disabled = val;
+      sendBtn.disabled = val;
+      sendBtn.textContent = val ? 'Asking…' : 'Ask';
+    }
+
+    // ── Message builders ──────────────────────────────────────────────────
+
+    function addUserMessage(text) {
+      const msg = document.createElement('div');
+      msg.className = 'msg user';
+      msg.innerHTML = `
+        <div class="avatar">👤</div>
+        <div class="bubble">${escHtml(text)}</div>
+      `;
+      messagesEl.appendChild(msg);
+      scrollBottom();
+    }
+
+    function createAssistantRow() {
+      const msg = document.createElement('div');
+      msg.className = 'msg assistant';
+      msg.innerHTML = `<div class="avatar">📊</div><div class="content"></div>`;
+      messagesEl.appendChild(msg);
+      scrollBottom();
+      return msg.querySelector('.content');
+    }
+
+    function showThinking(container) {
+      const el = document.createElement('div');
+      el.className = 'thinking';
+      el.id = 'thinking-indicator';
+      el.innerHTML = `<div class="thinking-dots"><span></span><span></span><span></span></div><span>Thinking…</span>`;
+      container.appendChild(el);
+      scrollBottom();
+      return el;
+    }
+
+    function removeThinking(container) {
+      const el = container.querySelector('#thinking-indicator');
+      if (el) el.remove();
+    }
+
+    function showTextDelta(container, delta) {
+      let textEl = container.querySelector('.bubble.streaming');
+      if (!textEl) {
+        const t = document.createElement('div');
+        t.className = 'bubble streaming';
+        container.insertBefore(t, container.querySelector('#thinking-indicator'));
+        textEl = t;
+      }
+      textEl.textContent += delta;
+      scrollBottom();
+    }
+
+    // ── Tool strip ────────────────────────────────────────────────────────
+
+    function getOrCreateToolStrip(container) {
+      let strip = container.querySelector('.tool-strip');
+      if (!strip) {
+        strip = document.createElement('div');
+        strip.className = 'tool-strip';
+        container.insertBefore(strip, container.querySelector('#thinking-indicator'));
+      }
+      return strip;
+    }
+
+    const TOOL_LABELS = {
+      resolve_company: 'Resolving company',
+      list_filings: 'Listing filings',
+      ingest_company_filings: 'Fetching SEC filings',
+      retrieve_filing_passages: 'Searching filing text',
+      get_xbrl_facts: 'Fetching XBRL facts',
+      compute_metric: 'Computing metric',
+      retrieve_transcript_passages: 'Searching transcripts',
+      submit_answer: 'Preparing answer',
+    };
+
+    function toolStart(container, toolName) {
+      const strip = getOrCreateToolStrip(container);
+      const item = document.createElement('div');
+      item.className = 'tool-item running';
+      item.id = `tool-${toolName}`;
+      const label = TOOL_LABELS[toolName] || toolName.replace(/_/g, ' ');
+      item.innerHTML = `<div class="spinner"></div><span>${escHtml(label)}…</span>`;
+      strip.appendChild(item);
+      scrollBottom();
+    }
+
+    function toolDone(container, toolName) {
+      const item = container.querySelector(`#tool-${toolName}`);
+      if (!item) return;
+      item.className = 'tool-item done';
+      const label = TOOL_LABELS[toolName] || toolName.replace(/_/g, ' ');
+      item.innerHTML = `<div class="dot-done"></div><span>${escHtml(label)}</span>`;
+    }
+
+    // ── Final answer ──────────────────────────────────────────────────────
+
+    function renderFinalAnswer(container, answer) {
+      // Remove streaming bubble and tool strip — replace with structured answer card
+      const streaming = container.querySelector('.bubble.streaming');
+      if (streaming) streaming.remove();
+      const strip = container.querySelector('.tool-strip');
+      if (strip) strip.remove();
+
+      const card = document.createElement('div');
+      card.className = 'answer-card';
+
+      // Answer text
+      const body = document.createElement('div');
+      body.className = 'answer-body';
+      body.textContent = answer.answer;
+      card.appendChild(body);
+
+      // Key points
+      if (answer.keyPoints?.length) {
+        const kp = document.createElement('div');
+        kp.className = 'key-points';
+        kp.innerHTML = '<h4>Key findings</h4>';
+        for (const point of answer.keyPoints) {
+          const el = document.createElement('div');
+          el.className = 'key-point';
+          el.textContent = point.claim;
+          kp.appendChild(el);
+        }
+        card.appendChild(kp);
+      }
+
+      // Verification badge
+      const ver = answer.verification;
+      if (ver) {
+        const badge = document.createElement('div');
+        badge.className = `verification ${ver.supported ? 'ok' : 'warn'}`;
+        badge.innerHTML = ver.supported
+          ? '✓ All claims verified'
+          : '⚠ Verification issues';
+        card.appendChild(badge);
+
+        if (!ver.supported && ver.warnings?.length) {
+          const warnEl = document.createElement('div');
+          warnEl.className = 'verification-warnings';
+          const list = ver.warnings.map(w => `<li>${escHtml(w)}</li>`).join('');
+          warnEl.innerHTML = `<ul>${list}</ul>`;
+          card.appendChild(warnEl);
+        }
+      }
+
+      // Caveats
+      if (answer.caveats?.length) {
+        const cav = document.createElement('div');
+        cav.className = 'caveats';
+        const items = answer.caveats.map(c => `<li>${escHtml(c)}</li>`).join('');
+        cav.innerHTML = `<h4>⚠ Caveats</h4><ul>${items}</ul>`;
+        card.appendChild(cav);
+      }
+
+      // Evidence toggle + list
+      if (answer.sources?.length) {
+        const toggle = document.createElement('div');
+        toggle.className = 'evidence-toggle';
+        toggle.innerHTML = `<span>Sources (${answer.sources.length})</span><span class="chevron">▾</span>`;
+        card.appendChild(toggle);
+
+        const list = document.createElement('div');
+        list.className = 'evidence-list';
+        for (const src of answer.sources) {
+          const item = document.createElement('div');
+          item.className = 'evidence-item';
+          const typeClass = src.sourceType?.replace(/[^a-z_]/g, '') || 'filing';
+          const locator = src.locator ? `<span class="ev-locator">${escHtml(src.locator)}</span>` : '';
+          item.innerHTML = `
+            <div class="ev-title">${escHtml(src.title)}</div>
+            <div class="ev-meta">
+              <span class="badge ${typeClass}">${escHtml(src.sourceType)}</span>
+              ${locator}
+            </div>
+          `;
+          list.appendChild(item);
+        }
+        card.appendChild(list);
+
+        toggle.addEventListener('click', () => {
+          toggle.classList.toggle('open');
+          list.classList.toggle('open');
+        });
+      }
+
+      container.appendChild(card);
+      scrollBottom();
+    }
+
+    function showError(container, message) {
+      const el = document.createElement('div');
+      el.className = 'error-msg';
+      el.textContent = `Error: ${message}`;
+      container.appendChild(el);
+      scrollBottom();
+    }
+
+    // ── SSE stream consumer ────────────────────────────────────────────────
+
+    async function startStream(query) {
+      setStreaming(true);
+      const container = createAssistantRow();
+      const thinking = showThinking(container);
+
+      try {
+        const response = await fetch('/api/research/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: query }),
+        });
+
+        if (!response.ok) {
+          const txt = await response.text();
+          removeThinking(container);
+          showError(container, `Server returned ${response.status}: ${txt}`);
+          return;
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+
+          // Parse complete SSE frames (separated by \n\n)
+          const frames = buf.split('\n\n');
+          buf = frames.pop() ?? '';
+
+          for (const frame of frames) {
+            if (!frame.trim()) continue;
+            const eventLine = frame.split('\n').find(l => l.startsWith('event: '));
+            const dataLine  = frame.split('\n').find(l => l.startsWith('data: '));
+            if (!eventLine || !dataLine) continue;
+
+            const type = eventLine.slice(7).trim();
+            let data;
+            try { data = JSON.parse(dataLine.slice(6)); } catch { continue; }
+
+            // Remove thinking dot on first real event
+            const th = container.querySelector('#thinking-indicator');
+            if (th && type !== 'done') th.remove();
+
+            if (type === 'text_delta') {
+              showTextDelta(container, data.delta ?? '');
+            } else if (type === 'tool_start') {
+              toolStart(container, data.toolName);
+            } else if (type === 'tool_result') {
+              toolDone(container, data.toolName);
+            } else if (type === 'final') {
+              renderFinalAnswer(container, data.answer);
+            } else if (type === 'error') {
+              showError(container, data.message ?? 'Unknown error');
+            } else if (type === 'done') {
+              // Stream finished cleanly
+            }
+          }
+        }
+
+        // If no final answer was produced (e.g. agent only streamed text), leave the bubble
+      } catch (err) {
+        removeThinking(container);
+        showError(container, err.message || 'Network error');
+      } finally {
+        setStreaming(false);
+        scrollBottom();
+      }
+    }
+
+    function scrollBottom() {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function escHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>
