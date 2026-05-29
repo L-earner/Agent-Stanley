@@ -4,18 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Project Is
 
-A **financial research analyst engine** built on the Pi coding-agent runtime (Earendil Works). It answers questions about public companies using SEC filings (10-K, 10-Q), XBRL facts, and earnings call transcripts. All 13 planned phases are implemented and passing tests (85/85 research-agent, 6/6 web-app, 5/5 evals).
+A **financial research analyst engine** (`agent-stanley`) built on the Pi coding-agent runtime (Earendil Works). It answers questions about public companies using SEC filings (10-K, 10-Q), XBRL facts, and earnings call transcripts. All 13 planned phases are implemented and passing tests (85/85 research-agent, 6/6 web-app, 5/5 evals).
 
-Reference docs live under `pi/docs/finance-agent/`: `ARCHITECTURE.md`, `HANDOFF.md`, `TODO.md`, ADRs.
+Reference docs live under `docs/finance-agent/`: `ARCHITECTURE.md`, `HANDOFF.md`, `TODO.md`, ADRs.
 
 ## Environment
 
-Node.js 22 (`.replit` updated to nodejs-22). Pi monorepo requires `>=22.19.0`. npm workspaces. Linter: biome (tabs, indent 3, line 120). Test runner: vitest. All work lives in `pi/`.
+Node.js 22. Monorepo requires `>=22.19.0`. npm workspaces. Linter: biome (tabs, indent 3, line 120). Test runner: vitest.
 
-## Commands (run from `pi/`)
+## Commands (run from repo root)
 
 ```bash
-# Build — tui → ai → agent → coding-agent dependency order
+# Build — tui → ai → agent → coding-agent → finance packages → research-tui
 npm run build
 
 # If ai package scripts fail, build ai manually first:
@@ -43,12 +43,15 @@ cd packages/research-agent && npm run eval
 npm run dev
 # Production
 npm start
+
+# Run the terminal UI
+npm run tui
 ```
 
 ## Package Structure
 
 ```
-pi/packages/
+packages/
   research-agent/src/
     runtime/
       ResearchAgentRuntime.ts          ← framework-neutral interface (no Pi import)
@@ -89,6 +92,17 @@ pi/packages/
     toolDeps.ts                        ← in-memory repo + provider wiring for all finance tools
     observability.ts                   ← request logging with redacted query metadata
     public/index.html                  ← minimal chat UI with evidence panel and caveats
+  research-tui/src/
+    cli.ts                             ← entry point (npm run tui)
+    research-tui.ts                    ← TUI orchestrator: input, streaming loop, turn management
+    tool-deps.ts                       ← same wiring as web-app/toolDeps.ts
+    theme.ts                           ← ANSI color helpers + MarkdownTheme
+    components/
+      user-message.ts                  ← renders user prompt line
+      tool-call.ts                     ← single tool row with spinner → ✓/✗
+      streaming-text.ts                ← accumulates text_delta into Markdown
+      analyst-answer.ts                ← final AnalystAnswer: key points, tables, caveats, sources
+      footer.ts                        ← divider + status + keybinding hints
 ```
 
 ## Architecture
@@ -145,6 +159,9 @@ export function createResolveCompanyTool(deps) { return defineTool({ ..., execut
 ### Transcript licensing
 - `TranscriptProvider` interface only. `NinjasTranscriptProvider` is implemented but requires `API_NINJAS_KEY`. Do not add paid providers without documenting license terms, storage rights, and attribution in an ADR under `docs/finance-agent/adr/`.
 
+### Pre-existing failures
+- `packages/ai` and `packages/coding-agent` have 3 failing tests in the upstream Pi source that require Node.js 22 for direct `.ts` execution. These are not caused by finance-agent work.
+
 ## Environment Variables
 
 ```
@@ -158,6 +175,6 @@ DATABASE_URL="postgres://..."                  # future production target (SQLit
 
 ## Session Workflow
 
-- Update `STATUS.md` (root) and `pi/docs/finance-agent/TODO.md` together — keep them in sync.
-- Update `pi/docs/finance-agent/HANDOFF.md` at the end of every meaningful session.
+- Update `STATUS.md` (root) and `docs/finance-agent/TODO.md` together — keep them in sync.
+- Update `docs/finance-agent/HANDOFF.md` at the end of every meaningful session.
 - Mark a TODO item complete only after implementation, tests, and docs are updated.

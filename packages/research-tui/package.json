@@ -1,0 +1,30 @@
+{
+	"name": "@earendil-works/pi-research-tui",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"clean": "shx rm -rf dist",
+		"build": "tsgo -p tsconfig.build.json",
+		"start": "node --import tsx/esm src/cli.ts",
+		"dev": "node --import tsx/esm --watch src/cli.ts",
+		"typecheck": "tsgo --noEmit -p tsconfig.build.json"
+	},
+	"dependencies": {
+		"@earendil-works/pi-coding-agent": "^0.77.0",
+		"@earendil-works/pi-research-agent": "^0.1.0",
+		"@earendil-works/pi-research-db": "^0.1.0",
+		"@earendil-works/pi-sec-ingestion": "^0.1.0",
+		"@earendil-works/pi-transcript-ingestion": "^0.1.0",
+		"@earendil-works/pi-tui": "^0.77.0"
+	},
+	"devDependencies": {
+		"@types/node": "24.12.4",
+		"shx": "0.4.0",
+		"tsx": "4.22.1",
+		"typescript": "5.9.3"
+	},
+	"engines": {
+		"node": ">=22.19.0"
+	}
+}

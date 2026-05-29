@@ -7,12 +7,14 @@
 	],
 	"scripts": {
 		"clean": "npm run clean --workspaces --if-present",
-		"build": "npm run build -w @earendil-works/pi-tui && npm run build -w @earendil-works/pi-ai && npm run build -w @earendil-works/pi-agent-core && npm run build -w @earendil-works/pi-coding-agent && npm run build -w @earendil-works/pi-research-db && npm run build -w @earendil-works/pi-sec-ingestion && npm run build -w @earendil-works/pi-transcript-ingestion && npm run build -w @earendil-works/pi-research-agent && npm run build -w @earendil-works/pi-web-app",
+		"build": "npm run build -w @earendil-works/pi-tui && npm run build -w @earendil-works/pi-ai && npm run build -w @earendil-works/pi-agent-core && npm run build -w @earendil-works/pi-coding-agent && npm run build -w @earendil-works/pi-research-db && npm run build -w @earendil-works/pi-sec-ingestion && npm run build -w @earendil-works/pi-transcript-ingestion && npm run build -w @earendil-works/pi-research-agent && npm run build -w @earendil-works/pi-web-app && npm run build -w @earendil-works/pi-research-tui",
 		"check": "biome check --write --error-on-warnings . && npm run typecheck",
 		"typecheck": "npm run typecheck --workspaces --if-present",
 		"test": "npm run test --workspaces --if-present",
 		"dev": "npm run dev --workspace @earendil-works/pi-web-app",
 		"start": "npm run start --workspace @earendil-works/pi-web-app",
+		"tui": "npm run start --workspace @earendil-works/pi-research-tui",
+		"check:browser-smoke": "node scripts/check-browser-smoke.mjs",
 		"prepare": "husky"
 	},
 	"devDependencies": {

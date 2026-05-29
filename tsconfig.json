@@ -25,9 +25,11 @@
 			"@earendil-works/pi-research-agent": ["./packages/research-agent/src/index.ts"],
 			"@earendil-works/pi-research-agent/*": ["./packages/research-agent/src/*"],
 			"@earendil-works/pi-web-app": ["./packages/web-app/src/index.ts"],
-			"@earendil-works/pi-web-app/*": ["./packages/web-app/src/*"]
+			"@earendil-works/pi-web-app/*": ["./packages/web-app/src/*"],
+			"@earendil-works/pi-research-tui": ["./packages/research-tui/src/cli.ts"],
+			"@earendil-works/pi-research-tui/*": ["./packages/research-tui/src/*"]
 		}
 	},
-	"include": ["packages/*/src/**/*", "packages/*/test/**/*", "packages/coding-agent/examples/**/*"],
+	"include": ["packages/*/src/**/*", "packages/*/test/**/*"],
 	"exclude": ["**/dist/**"]
 }
